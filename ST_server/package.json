@@ -1,0 +1,23 @@
+{
+    "name": "STDebugServer",
+    "description": "Server for parsing steering telegraph output",
+    "version": "1.0.0",
+    "main": "main.js",
+    "keywords": [
+        "nodejs",
+        "docker"
+    ],
+    "dependencies": {
+        "modbus-serial": "^8.0.17"
+    },
+    "scripts": {
+        "start": "node main.js ",
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "nodemon": "^3.1.7",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.6.3"
+    }
+}

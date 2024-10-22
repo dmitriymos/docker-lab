@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Датчик положения руля</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="all.css">
+</head>
+
+<body>
+    <div class="content">
+        <h1>Рулевой телеграф 03182Р</h1>
+        <input id="r" type="range" min="-35" max="35" onchange="updateVal()" val="0">
+        <p>Значение угла поворота: </p><p id="angle_val">0</p>
+        <input type="checkbox" onchange="updateChecks()" id="check1" name="check1" value="1">
+        <label for="check1">Сбой обмена данными с сенсором</label>
+
+
+        <br>
+        <input type="checkbox" onchange="updateChecks()" id="check2" name="check2" value="2">
+        <label for="check2">Соединение с сенсором нестабильно</label>
+
+        <br>
+        <input onchange="updateChecks()" type="checkbox" id="check3" name="check3" value="3">
+        <label for="check3">Аппаратный отказ</label>
+        <br>
+        <input type="button" onclick="changeValue((val) => {return val - 10})" value="&lt;&lt;">
+        <input type="button" onclick="changeValue((val) => {return val - 1})"  value="&lt;"    >
+        <input type="button" onclick="changeValue((val) => {return 0})"        value="0"       >
+        <input type="button" onclick="changeValue((val) => {return val + 1})"  value=">"       >
+        <input type="button" onclick="changeValue((val) => {return val + 10})" value=">>">
+
+    </div>
+    <script>
+        angle = 0
+        error = 0
+        function updateVal() {
+            angle = document.getElementById('r').value;
+            document.getElementById('angle_val').innerHTML = angle;
+            sendToServer()
+        }
+        function changeValue(f){
+            angle = f(angle)
+            if(angle <= -35){
+                angle = -35
+            }else if(angle >= 35){
+                angle = 35
+            }
+            document.getElementById('angle_val').innerHTML = angle
+            document.getElementById('r').value = angle
+            sendToServer()
+        }
+        async function updateChecks() {
+            error = 0;
+            error |= 1 * document.getElementById('check1').checked;
+            error |= 2 * document.getElementById('check2').checked;
+            error |= 4 * document.getElementById('check3').checked;
+            console.log(error)
+            sendToServer()
+        }
+        function sendToServer() {
+            fetch("/send", {
+                method: "POST",
+                body: JSON.stringify({
+                    error: error,
+                    angle: angle
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
